@@ -1,6 +1,8 @@
-This is an implimentation of the A* (A-Star) search algorithm that is written
-to Java interfaces so it's easy for you to use with your existing graph and
-graph node classes. Just make your existing classes implement the following two
+A* (A-Star) search algorithm
+
+This is an implimentation of the A* (A-Star) search algorithm, based on
+Dijkstra's algorithm, that is written to Java interfaces so it's easy for
+you to integrate with your existing code. Just implement these two
 interfaces and you're all set:
 
 Graph {
@@ -15,10 +17,9 @@ GraphNode {
 	int hashCode();
 }
 
-Once you have this, the following methods on the PathFinder class will be
+Once you've done this the following methods on the PathFinder class will be
 available to you:
 
 List<GraphNode> findShortestPath(GraphNode startNode, GraphNode endNode, Graph graph);
 int findLowestPathCost(GraphNode startNode, GraphNode endNode, Graph graph);
 Set<GraphNode> findAllNodes(GraphNode startNode, int maxDistance, Graph graph);
-
