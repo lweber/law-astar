@@ -1,5 +1,5 @@
 This is an implimentation of the A* (A-Star) search algorithm that is written
-to Java interfaces so it's easy for you to use it with your existing graph and
+to Java interfaces so it's easy for you to use with your existing graph and
 graph node classes. Just make your existing classes implement the following two
 interfaces and you're all set:
 
