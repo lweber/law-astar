@@ -23,6 +23,7 @@ public class PathNode implements Comparable<PathNode> {
 	
 	private final GraphNode thisGraphNode;
 	private final GraphNode endGraphNode;
+	private final Graph parentGraph;
 	
 	private PathNode parentNode = null; // Previous node in the path.
 	
@@ -39,10 +40,12 @@ public class PathNode implements Comparable<PathNode> {
 	 *  Note, endNode should be null if the calling algorithm is not
 	 *  searching for a specific end node - e.g. Dijkstra's algorithm -
 	 *  getH() will return 0 in this case.
+	 * @param graph - the graph that contains both graph nodes.
 	 */
-	PathNode(GraphNode gn, GraphNode endNode) {
+	PathNode(GraphNode gn, GraphNode endNode, Graph graph) {
 		thisGraphNode = gn;
 		endGraphNode = endNode;
+		parentGraph = graph;
 	}
 	
 	/**
@@ -113,7 +116,7 @@ public class PathNode implements Comparable<PathNode> {
 			}
 			else {
 				gCost = parentNode.getG() +
-					thisGraphNode.getGraph().getCostToNeighbor(
+						parentGraph.getCostToNeighbor(
 						parentNode.getGraphNode(), thisGraphNode);
 			}
 		}
@@ -136,7 +139,7 @@ public class PathNode implements Comparable<PathNode> {
 		if (hCost < 0) {
 			// Cache, for performance.
 			if (endGraphNode != null) {
-				hCost = thisGraphNode.getGraph().estimateCostToEnd(
+				hCost = parentGraph.estimateCostToEnd(
 						thisGraphNode, endGraphNode);
 			}
 			else {

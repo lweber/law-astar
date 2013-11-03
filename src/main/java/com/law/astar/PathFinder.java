@@ -6,6 +6,7 @@ package com.law.astar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Methods for finding paths in a graph.
@@ -27,33 +28,8 @@ public class PathFinder {
 	 */
 	static public List<GraphNode> findShortestPath(GraphNode startNode, GraphNode endNode, Graph graph) {
 		
-		HashSet<PathNode> pathSet = dijkstra(startNode, endNode, Integer.MAX_VALUE, graph);
+		Set<PathNode> pathSet = dijkstra(startNode, endNode, Integer.MAX_VALUE, graph);
 		return pathSet.size() == 1 ? pathSet.iterator().next().getNodes() : null;
-		
-//		long time1 = System.nanoTime();
-//		PathNode pn = findPathNode(startNode, endNode, graph);
-//		time1 = System.nanoTime() - time1;
-//		
-//		// Teporary test code to make sure dijkstra() is operating correctly.
-//		long time2 = System.nanoTime();
-//		HashSet<PathNode> pathSet = dijkstra(startNode, endNode, Integer.MAX_VALUE, graph);
-//		time2 = System.nanoTime() - time2;
-//		PathNode pn2 = pathSet.size() == 1 ? pathSet.iterator().next() : null;
-//		if ((pn == null) != (pn2 == null)) {
-//			System.out.println("Error: findPathNode=" + pn + ", dijkstra=" + pn2);
-//		}
-//		if (pn != null) {
-//			List<GraphNode> l1 = pn.getPath();
-//			List<GraphNode> l2 = pn2.getPath();
-//			
-//			BigDecimal t1 = BigDecimal.valueOf(time1).divide(BigDecimal.valueOf(1000000));
-//			BigDecimal t2 = BigDecimal.valueOf(time2).divide(BigDecimal.valueOf(1000000));
-//			System.out.println((l1.containsAll(l2) && l2.containsAll(l1)
-//					&& l1.size() == l2.size()) +
-//					": time1=" + t1 + "ms, time2=" + t2 + "ms");
-//		}
-//		
-//		return pn != null ? pn.getPath() : null;
 	}
 	
 	/**
@@ -69,25 +45,13 @@ public class PathFinder {
 	 */
 	static public int findLowestPathCost(GraphNode startNode, GraphNode endNode, Graph graph) {
 		
-		HashSet<PathNode> pathSet = dijkstra(startNode, endNode, Integer.MAX_VALUE, graph);
+		Set<PathNode> pathSet = dijkstra(startNode, endNode, Integer.MAX_VALUE, graph);
 		return pathSet.size() == 1 ? pathSet.iterator().next().getG() : -1;
-		
-//		PathNode pn = findPathNode(startNode, endNode, graph);
-//		
-//		// Teporary test code to make sure dijkstra() is operating correctly.
-//		int getg = pn != null ? pn.getG() : -1;
-//		HashSet<PathNode> pathSet = dijkstra(startNode, endNode, Integer.MAX_VALUE, graph);
-//		int cost = pathSet.size() == 1 ? pathSet.iterator().next().getG() : -1;
-//		if (cost != getg) {
-//			System.out.println("Error: cost != pn.getG() : cost=" + cost + "pn.getG()=" + getg);
-//		}
-//		
-//		return pn != null ? pn.getG() : -1;
 	}
 	
 	/**
 	 * Find all the nodes that are within a maximum distance from a given start
-	 * node in a graph.
+	 * node in a graph. Note, the start node is included in the result.
 	 * 
 	 * @param startNode - 
 	 * @param maxDistance - 
@@ -95,11 +59,11 @@ public class PathFinder {
 	 * 
 	 * @return A set of zero or more nodes from the graph.
 	 */
-	static public HashSet<GraphNode> findAllNodes(GraphNode startNode, int maxDistance, Graph graph) {
+	static public Set<GraphNode> findAllNodes(GraphNode startNode, int maxDistance, Graph graph) {
 		
-		HashSet<PathNode> pathSet = dijkstra(startNode, null, maxDistance, graph);
+		Set<PathNode> pathSet = dijkstra(startNode, null, maxDistance, graph);
 		
-		HashSet<GraphNode> resultSet = new HashSet<GraphNode>(pathSet.size());
+		Set<GraphNode> resultSet = new HashSet<GraphNode>(pathSet.size());
 		
 		for (PathNode pn : pathSet) {
 			resultSet.add(pn.getGraphNode());
@@ -122,8 +86,8 @@ public class PathFinder {
 	static HashSet<PathNode> dijkstra(
 			GraphNode startNode, GraphNode endNode, int maxDistance, Graph graph) {
 		
-		PathNode startPathNode = new PathNode(startNode, null);
-		PathNode endPathNode = endNode == null ? null : new PathNode(endNode, endNode);
+		PathNode startPathNode = new PathNode(startNode, null, graph);
+		PathNode endPathNode = endNode == null ? null : new PathNode(endNode, endNode, graph);
 		
 		PathNodeSet closedSet = new PathNodeSet(false);
 		PathNodeSet openSet = new PathNodeSet(true);
@@ -169,7 +133,7 @@ public class PathFinder {
 					// If the neighbor node isn't in the open set then put
 					// it there, making the current node its parent first
 					// so the F cost can be calculated correctly.
-					PathNode neighborPathNode = new PathNode(neighborNode, endNode);
+					PathNode neighborPathNode = new PathNode(neighborNode, endNode, graph);
 					neighborPathNode.setParent(curNode);
 					
 					if (neighborPathNode.getG() <= maxDistance) {
@@ -208,89 +172,5 @@ public class PathFinder {
 		
 		return resultSet;
 	}
-	
-//	/**
-//	 * A* path finding algorithm.
-//	 * 
-//	 * @param startNode - 
-//	 * @param endNode - 
-//	 * @param graph - 
-//	 * 
-//	 * @return
-//	 */
-//	static PathNode findPathNode(GraphNode startNode, GraphNode endNode, Graph graph) {
-//		
-//		PathNode startPathNode = new PathNode(startNode, endNode);
-//		PathNode endPathNode = new PathNode(endNode, endNode);
-//		
-//		PathNodeSet closedSet = new PathNodeSet(false);
-//		PathNodeSet openSet = new PathNodeSet(true);
-//		
-//		// Add the starting node to the open set.
-//		openSet.add(startPathNode);
-//		
-//		// As long as the open set is not empty the path may yet be found.
-//		// When the endNode is found the path is found. If the open set
-//		// becomes empty then there is no path.
-//		while (openSet.size() > 0) {
-//			
-//			// Get the lowest F cost node in the open set.
-//			PathNode curNode = openSet.getFirst();
-//			
-//			// Path is found when the end node would be added to the closed set.
-//			if (curNode.equals(endPathNode)) {
-//				return curNode;
-//			}
-//			
-//			// Move the node to the closed set.
-//			openSet.remove(curNode);
-//			closedSet.add(curNode);
-//			
-//			// For each node adjacent to the current node.
-//			Iterator<GraphNode> neighborNodes = graph.getNeighborNodes(curNode.getGraphNode());
-//			
-//			while (neighborNodes.hasNext()) {
-//				GraphNode neighborNode = neighborNodes.next();
-//				
-//				// If it is in the closed set it has already been eliminated.
-//				if (closedSet.contains(neighborNode)) continue;
-//				
-//				// No need to skip curNode's own parent because it is already
-//				// in the closed set.
-//				
-//				PathNode openListNode = openSet.get(neighborNode);
-//				
-//				if (openListNode == null) {
-//					// If the neighbor node isn't in the open set then put
-//					// it there, making the current node its parent first
-//					// so the F cost can be calculated correctly.
-//					PathNode neighborPathNode = new PathNode(neighborNode, endNode);
-//					neighborPathNode.setParent(curNode);
-//					openSet.add(neighborPathNode);
-//				}
-//				else {
-//					// If the neighbor node is already in the open set then
-//					// check to see if the current path to it is better (has
-//					// a lower G cost) than the path leading to it now. If
-//					// the current path is better then update the node's
-//					// parent to add the node to the current path.
-//					int costToNeighbor = graph.getCostToNeighbor(
-//							curNode.getGraphNode(), neighborNode);
-//					
-//					if (costToNeighbor + curNode.getG() < openListNode.getG()) {
-//						// Setting a new parent will clear the cached cost
-//						// values for the PathNode. Remove the node from the
-//						// set and add it again so that the set will be
-//						// sorted correctly.
-//						openSet.remove(openListNode);
-//						openListNode.setParent(curNode);
-//						openSet.add(openListNode);
-//					}
-//				}
-//			}
-//		}
-//		
-//		return null;
-//	}
 	
 }

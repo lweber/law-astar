@@ -7,8 +7,6 @@ package com.law.astar;
  * Interface for a graph node which implements methods required to
  * be a node in a graph which supports the A* algorithm.
  * 
- * <p> GraphNodes must be able to provide the Graph that they belong to.
- *
  * <p> GraphNodes must override equals() and hashCode() so that they
  * may be stored in HashSet and other Set collections.
  *
@@ -17,19 +15,12 @@ package com.law.astar;
 public interface GraphNode {
 	
 	/**
-	 * Get the graph that contains this node.
-	 * 
-	 * @return
-	 */
-	public Graph getGraph();
-	
-	/**
-	 * Get the name of this node - node names must be unique within
+	 * Get the name of this node. Node names must be unique within
 	 * a given Graph so that equals() and hashCode() may use them.
 	 * 
 	 * @return
 	 */
-	public String getNodeName();
+	String getNodeName();
 	
 	/**
 	 * Enables storing nodes in hash sets. Generally implemented as
@@ -39,7 +30,7 @@ public interface GraphNode {
 	 * 
 	 * @return
 	 */
-	public boolean equals(Object obj);
+	boolean equals(Object obj);
 	
 	/**
 	 * Enables storing nodes in hash sets. Generally implemented as
@@ -48,6 +39,6 @@ public interface GraphNode {
 	 * 
 	 * @return
 	 */
-	public int hashCode();
+	int hashCode();
 	
 }
